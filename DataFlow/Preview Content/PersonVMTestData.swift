@@ -8,10 +8,10 @@
 
 import Foundation
 
-extension PersonViewModel {
+extension PersonModel {
     // Sample data for use in Previews only
 
-    static func samplePerson() -> PersonViewModel {
+    static func samplePerson() -> PersonModel {
         let json = """
         {
           "id": "07534800-9c07-4857-b931-d6541ff0df08",
@@ -28,6 +28,6 @@ extension PersonViewModel {
 
         // Uisng force un-wrapping for sample data only, not for production
         let person = try! jsonDecoder.decode(PersonModel.self, from: json.data(using: .utf8)!)
-        return PersonViewModel(with: person)
+        return person
     }
 }

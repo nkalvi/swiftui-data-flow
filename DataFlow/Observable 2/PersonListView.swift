@@ -28,38 +28,48 @@ struct PersonListView: View {
             // Note that PersonDetailView has changed from using @Binding to @ObservedObject.
             
             // And a further update after receiving some more feedback which suggested
-            // that using @Binding was better as it means that the entire ForEach doid not have to be
-            // re-calcaulted afetr every change. But this uses a Dictionary to avoid Stewart's function.
+            // that using @Binding was better as it means that the entire ForEach did not have to be
+            // re-calcaulted after every change. But this uses a Dictionary to avoid Stewart's function.
             
             ForEach(personList.ids, id: \.self) { id in
                 NavigationLink(
-                    destination: PersonDetailView(person: self.$personList.persons[unchecked: id])
+                    destination:
+                        PersonDetailView(person: $personList.persons[unchecked: id])
                 ) {
-                    Text("\(self.personList.persons[unchecked: id].first)") +
-                        Text(" \(self.personList.persons[unchecked: id].last)")
+                    Text("\(personList.persons[unchecked: id].first)") +
+                        Text(" \(personList.persons[unchecked: id].last)")
                 }
             }
             .onDelete { indexSet in
                 // add this modifier to allow deleting from the list
-                self.personList.ids.remove(atOffsets: indexSet)
+                personList.ids.remove(atOffsets: indexSet)
             }
             .onMove { indices, newOffset in
                 // add this modifier to allow moving in the list
-                self.personList.ids.move(fromOffsets: indices, toOffset: newOffset)
+                personList.ids.move(fromOffsets: indices, toOffset: newOffset)
             }
         }
-            
-            // This runs when the view appears to load the initial data
-            .onAppear(perform: { self.personList.fetchData() })
-            
-            // set up the navigation bar details
-            // EditButton() is a standard View
-            .navigationBarTitle("People")
-            .navigationBarItems(trailing:
+        
+        // This runs when the view appears to load the initial data
+        .onAppear(perform: { personList.fetchData() })
+        
+        // set up the navigation bar details
+        // EditButton() is a standard View
+        .navigationBarTitle("People")
+        .navigationBarItems(
+            trailing:
                 HStack {
-                    Button(action: { self.personList.refreshData() }) {
+                    Button(action: { personList.refreshData() }) {
                         Image(systemName: "arrow.clockwise")
                     }
+                    
+                    Spacer().frame(width: 30)
+                    Button(action: {
+                        personList.sortIds()                        
+                    }) {
+                        Text("Sort")
+                    }
+                    
                     Spacer().frame(width: 30)
                     EditButton()
                 }
